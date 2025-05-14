@@ -1,0 +1,86 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./patrion_backend
+    container_name: patrion_backend
+    ports:
+      - "3000:3000"
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USERNAME=enes
+      - DB_PASSWORD=enes123
+      - DB_NAME=patrion
+    command: ["dockerize", "-wait", "tcp://postgres:5432", "-timeout", "30s", "npm", "run", "start:prod"]
+    depends_on:
+      - postgres
+    networks:
+      - my_network
+
+  postgres:
+    image: postgres:15
+    container_name: patrion_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: patrion
+      POSTGRES_USER: enes
+      POSTGRES_PASSWORD: enes123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks: 
+      - my_network
+
+  influxdb:
+    image: influxdb:2.7
+    container_name: patrion_influxdb
+    restart: unless-stopped
+    ports:
+      - "8086:8086"
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=admin
+      - DOCKER_INFLUXDB_INIT_PASSWORD=admin123
+      - DOCKER_INFLUXDB_INIT_ORG=patrion_org
+      - DOCKER_INFLUXDB_INIT_BUCKET=sensor_bucket
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=14XZhM8xuBq6YfNGlPyHqIAEEifHaWQWufgTEJgwHomAcf1YyPkzACdBgPOgKippluCW7AOx1hmlES_0EZk_Wg==
+    volumes:
+      - influxdb_data:/var/lib/influxdb2
+    networks:
+      - my_network
+
+  mosquitto:
+    image: eclipse-mosquitto:2
+    container_name: patrion_mosquitto
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+      - "9001:9001" # WebSocket için
+    volumes:
+      - ./patrion_backend/mosquitto/config:/mosquitto/config
+      - ./patrion_backend/mosquitto/data:/mosquitto/data
+      - ./patrion_backend/mosquitto/log:/mosquitto/log
+    networks:
+      - my_network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: patrion_pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    ports:
+      - "5050:80"
+    networks:
+      - my_network
+
+volumes:
+  postgres_data:
+  influxdb_data:
+
+networks:
+  my_network:
+    driver: bridge
