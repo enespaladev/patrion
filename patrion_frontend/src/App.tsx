@@ -4,6 +4,8 @@ import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, Legend, Responsi
 import SensorCard from './components/SensorCard';
 import Dashboard from './components/Dashboard';
 import { SensorData } from './types';
+import LogChart from './components/LogChart';
+import LogChartWithFilter from './components/LogChartWithFilter';
 
 const socket = io('http://localhost:3000');
 
@@ -72,7 +74,10 @@ function App() {
   }, []);
 
   return (
-    <Dashboard data={data} />
+    <div>
+      <Dashboard data={data} />
+      <LogChartWithFilter />
+    </div>
   );
 }
 
