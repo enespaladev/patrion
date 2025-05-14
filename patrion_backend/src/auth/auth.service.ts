@@ -25,7 +25,7 @@ export class AuthService {
   // }
 
   async register(createUserDto: CreateUserDto): Promise<User> {
-    return this.userRepository.createUser(createUserDto); // ✅ artık çalışır
+    return this.userRepository.createUser(createUserDto);
   }
 
   async login(email: string, password: string) {

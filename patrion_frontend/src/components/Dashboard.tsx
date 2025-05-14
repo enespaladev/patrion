@@ -1,15 +1,9 @@
 import SensorCard from './SensorCard';
+import { SensorData } from '../types';
+
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts';
-
-interface SensorData {
-  sensor_id: string;
-  temperature: number;
-  humidity: number;
-  timestamp: number;
-  formattedTimestamp?: string;
-}
 
 export default function Dashboard({ data }: { data: SensorData[] }) {
   const last = data[data.length - 1];

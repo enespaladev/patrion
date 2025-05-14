@@ -12,6 +12,7 @@ import { InfluxService } from './influx/influx.service';
 import { InfluxModule } from './influx/influx.module';
 import { WebsocketGateway } from './websocket/websocket.gateway';
 import { SensorModule } from './sensors/sensor.module';
+import { JwtStrategy } from './auth/jwt.strategy';
 
 dotenv.config();
 
@@ -46,7 +47,7 @@ console.log('DB_NAME:', process.env.DB_NAME);
     SensorModule,
   ],
   controllers: [AppController],
-  providers: [AppService, MqttService, InfluxService, WebsocketGateway],
+  providers: [AppService, MqttService, InfluxService, WebsocketGateway, JwtStrategy],
   exports: [WebsocketGateway],
 })
 export class AppModule {}
