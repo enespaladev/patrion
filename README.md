@@ -1,41 +1,108 @@
+# 🧠 Akıllı Sensör Takip Sistemi (IoT + NestJS)
 
-![Logo](https://cdn.prod.website-files.com/67efd08048a4f0f2f07a282a/67f2ae227a51aa331193a1c5_patrion-logo-dark-120.svg)
+Bu proje, bir fabrikanın IoT sensörlerinden gelen verileri MQTT protokolü ile toplayan, InfluxDB üzerinde saklayan ve WebSocket üzerinden gerçek zamanlı yayınlayan akıllı bir takip sistemidir. Ayrıca sistemde kullanıcı yönetimi, log takip mekanizması ve güvenlik katmanları mevcuttur.
 
-    
-# Patrion Sensör Takip Sistemi
+## 📦 Teknoloji Stack
 
-Bu proje Patrion İleri Teknoloji Sistemleri A.Ş tarafından Iot sensörlerinden alınan verilerin takibi için yapılmış bir uygulamadır. 
+- **Backend:** Node.js (NestJS)
+- **Gerçek Zamanlı Veri:** MQTT (Mosquitto), WebSocket
+- **Veritabanı:** PostgreSQL (kullanıcı verisi), InfluxDB (sensör verisi)
+- **Kimlik Doğrulama:** JWT
+- **Frontend:** React (dashboard)
+- **Containerization:** Docker & Docker Compose
 
-## Kullanılan Teknolojiler
+## 🧱 Mimari Genel Bakış
 
-**Frontend:** React, Redux, TailwindCSS
-
-**Backend:** Node.js (NestJS)
-
-**Veri Tabanı:** PostgreSQL, InfluxDB
-
-**Gerçek Zamanlı Veri:** MQTT, WebSockets
-
-**MQTT Broker:** Eclipse Mosquitto
-
-**Containerization & Deployment:** Docker
-
-**Kimlik Doğrulama:** Jwt
-
-**Loggin:** Structured JSON Logging
-
-  
-## Ekran Görüntüleri
-
-![Uygulama Ekran Görüntüsü](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
-
-  
-## Yükleme 
-
-```bash 
-  cd frontend
-  npm install
-  cd backend
-  npm install
+```mermaid
+graph TD;
+    Sensor-->|MQTT|Broker(Mosquitto);
+    Broker-->Backend(NestJS);
+    Backend-->|WebSocket|Client;
+    Backend-->PostgreSQL;
+    Backend-->InfluxDB;
 ```
-    
+
+## 🧑‍💼 Kullanıcı Roller
+
+- **System Admin:** Tüm sistem üzerinde tam yetki (diğer kullanıcılar tarafından görünmez).
+- **Company Admin:** Şirket kullanıcılarını yönetir, IoT cihazları görüntüler.
+- **User:** Sadece yetkili olduğu sensör verilerini görüntüler.
+
+## 📡 MQTT Veri Formatı
+
+```json
+{
+  "sensor_id": "temp_sensor_01",
+  "timestamp": 1710772800,
+  "temperature": 25.4,
+  "humidity": 55.2
+}
+```
+
+## 🔒 Güvenlik Katmanları
+
+- JWT doğrulama
+- MQTT TLS/SSL şifreleme
+- Rate limiting (DDoS koruması)
+- Rol bazlı erişim kontrolü (Guard sistemi)
+- Loglara sadece admin erişimi
+
+## 🐳 Kurulum
+
+```bash
+# Projeyi klonlayın
+git clone https://github.com/kullaniciadi/proje-adi.git
+cd proje-adi
+
+# Ortam değişkenlerini ayarlayın
+cp .env.example .env
+
+# Docker üzerinden başlatın
+docker compose up --build -d
+```
+
+## 🔌 .env Değişkenleri
+
+```env
+DB_HOST=postgres
+DB_PORT=5432
+DB_USERNAME=postgres
+DB_PASSWORD=secret
+DB_NAME=iot_db
+
+JWT_SECRET=supersecretkey
+JWT_EXPIRES_IN=3600s
+
+INFLUX_URL=http://influxdb:8086
+INFLUX_TOKEN=your_token
+INFLUX_ORG=your_org
+INFLUX_BUCKET=your_bucket
+
+MQTT_BROKER_URL=mqtts://broker:8883
+```
+
+## 📊 Dashboard
+
+Gerçek zamanlı olarak sıcaklık ve nem grafiklerini gösteren arayüz React ile geliştirilmiştir. WebSocket üzerinden canlı veri akışı yapılır.
+
+## ✅ Özellikler
+
+- MQTT üzerinden veri alımı
+- InfluxDB’ye veri kaydı
+- WebSocket ile canlı yayın
+- Kullanıcı yönetimi ve rol kontrolü
+- Log sayfası erişim takibi
+- TLS/SSL destekli MQTT güvenliği
+- Docker ile container yapısı
+- REST API + WebSocket endpointleri
+
+## 🧪 Testler
+
+- JWT doğrulama testleri
+- Rol bazlı erişim testi
+- WebSocket mesaj kontrolü
+- (Jest ile örnek testler yakında eklenecek)
+
+## 📁 Lisans
+
+MIT

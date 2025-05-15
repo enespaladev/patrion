@@ -7,7 +7,7 @@ import { Request } from 'express';
 
 declare module 'express' {
   interface Request {
-    user?: { userId: string }; // Adjust the type of user as per your application's requirements
+    user?: { userId: string }; 
   }
 }
 import { UserLogService } from './user-log.service';
@@ -16,6 +16,20 @@ import { UserLogService } from './user-log.service';
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class UserLogController {
   constructor(private readonly userLogService: UserLogService) { }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('system_admin')
+  @Get('test-auth')
+  test(@Req() req) {
+    console.log('🧠 request.user:', req.user);
+    return { user: req.user };
+  }
+
+  @Get('debug/headers')
+  getHeaders(@Req() req: Request) {
+    console.log('🔍 Gelen Headerlar:', req.headers);
+    return req.headers;
+  }
 
   @Get('view')
   async logView(@Req() req: Request) {
@@ -40,4 +54,6 @@ export class UserLogController {
   async getSummaryByAction(@Param('action') action: string) {
     return this.userLogService.getDailySummaryByAction(action);
   }
+
+
 }

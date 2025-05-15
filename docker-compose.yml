@@ -15,6 +15,8 @@ services:
     command: ["dockerize", "-wait", "tcp://postgres:5432", "-timeout", "30s", "npm", "run", "start:prod"]
     depends_on:
       - postgres
+    volumes:
+      - ./patrion_backend/mosquitto/certs:/app/mosquitto/certs
     networks:
       - my_network
 
@@ -56,11 +58,12 @@ services:
     container_name: patrion_mosquitto
     restart: unless-stopped
     ports:
-      - "1883:1883"
+      - "8883:8883"
       - "9001:9001" # WebSocket için
     volumes:
       - ./patrion_backend/mosquitto/config:/mosquitto/config
       - ./patrion_backend/mosquitto/data:/mosquitto/data
+      - ./patrion_backend/mosquitto/certs:/mosquitto/certs
       - ./patrion_backend/mosquitto/log:/mosquitto/log
     networks:
       - my_network

@@ -15,19 +15,24 @@ import { SensorModule } from './sensors/sensor.module';
 import { JwtStrategy } from './auth/jwt.strategy';
 import { UserLogModule } from './user-log/user-log.module';
 
-dotenv.config();
+import { ThrottlerModule } from '@nestjs/throttler';
 
-console.log('DB_HOST:', process.env.DB_HOST);
-console.log('DB_PORT:', process.env.DB_PORT);
-console.log('DB_USERNAME:', process.env.DB_USERNAME);
-console.log('DB_PASSWORD:', process.env.DB_PASSWORD);
-console.log('DB_NAME:', process.env.DB_NAME);
+dotenv.config();
 
 @Module({
   imports: [
     ConfigModule.forRoot({ 
       isGlobal: true,
       envFilePath: '.env', 
+    }),
+
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          ttl: 60,  // saniye cinsinden süre
+          limit: 10 // bu sürede en fazla istek sayısı
+        },
+      ],
     }),
     
     TypeOrmModule.forRoot({
