@@ -51,6 +51,10 @@ graph TD;
 
 Daha fazla bilgi için [api.md](./API.md) dosyasına göz atın.
 
+## 📘 Deployment Dökümantasyonu
+
+Daha fazla bilgi için [api.md](./deployment.md) dosyasına göz atın.
+
 ## 🐳 Kurulum
 
 ```bash
