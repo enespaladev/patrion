@@ -47,6 +47,10 @@ graph TD;
 - Rol bazlı erişim kontrolü (Guard sistemi)
 - Loglara sadece admin erişimi
 
+## 📘 API Dökümantasyonu
+
+Daha fazla bilgi için [api.md](./API.md) dosyasına göz atın.
+
 ## 🐳 Kurulum
 
 ```bash

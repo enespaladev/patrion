@@ -17,21 +17,7 @@ import { UserLogService } from './user-log.service';
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class UserLogController {
   constructor(private readonly userLogService: UserLogService) { }
-
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('system_admin')
-  @Get('test-auth')
-  test(@Req() req) {
-    console.log('🧠 request.user:', req.user);
-    return { user: req.user };
-  }
-
-  @Get('debug/headers')
-  getHeaders(@Req() req: Request) {
-    console.log('🔍 Gelen Headerlar:', req.headers);
-    return req.headers;
-  }
-
+  
   @Get('/')
   async logView(@Req() req: Request) {
     const user = req.user as any;

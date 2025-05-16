@@ -1,34 +1,38 @@
 # 📘 API Endpoint Dökümantasyonu
 
 Tüm isteklerde `Authorization: Bearer <token>` header’ı zorunludur.
+Bu sistemde kullanıcılar rol bazlı yetkilendirme ile işlem yapar. `system_admin`, `company_admin` ve `user` rollerine göre erişim kısıtlamaları uygulanmıştır.
 
----
+## ✅ Genel Bilgiler
 
-### 🔐 Auth
+- Tüm endpointler JWT ile korunur (`JwtAuthGuard`)
+- Erişim rollere göre `RolesGuard` ile kontrol edilir
+- `JwtStrategy` ile `req.user` içine kullanıcı ve `company` bilgileri otomatik set edilir
+
+
+### 🔐 Auth – Kimlik Doğrulama
 
 #### POST `/auth/register`
-**Açıklama:** Kullanıcı oluşturur.
+**Açıklama:** Sadece `system_admin` erişebilir. Yeni kullanıcı oluşturur.
+
 **Yetki:** `System Admin`
+
+**Headers:**
+```
+Authorization: Bearer <admin_token>
+```
 
 **İstek:**
 ```json
 {
   "email": "user@example.com",
-  "password": "password123",
-  "role": "user"
+  "password": "123456",
+  "role": "company_admin",
+  "companyId": "company-uuid"
 }
-
-#### Yanıt:
-```json
-{
-    "id": "...",
-    "email": "user@example.com",
-    "password": "...",
-    "role": "user"
-}
-
+```
 #### POST `/auth/login`
-**Açıklama:** Kullanıcı girişi yapar.
+**Açıklama:** JWT token almak için giriş yapar.
 
 **İstek:**
 ```json
@@ -36,41 +40,92 @@ Tüm isteklerde `Authorization: Bearer <token>` header’ı zorunludur.
   "email": "user@example.com",
   "password": "password123"
 }
+```
 
-#### Yanıt:
+### `POST /auth/register-by-admin`
+Sadece `company_admin` erişebilir. Sadece kendi şirketine `user` rolünde kullanıcı ekler.
+
+**Headers:**
+```
+Authorization: Bearer <company_admin_token>
+```
+
+**Body:**
 ```json
 {
-  "access_token": "..."
+  "email": "newuser@example.com",
+  "password": "123456",
+  "username": "AliKullanıcı"
 }
 ```
 
----
+## 🏢 COMPANY – Şirket Yönetimi
 
-### 👥 Kullanıcılar
+### `POST /company/create`
+Sadece `system_admin` erişebilir. Yeni şirket oluşturur.
 
-#### GET `/users`
-**Yetki:** `System Admin`
+**Headers:**
+```
+Authorization: Bearer <admin_token>
+```
 
-#### POST `/users`
-**Yetki:** `Company Admin`  
-**Açıklama:** Yeni kullanıcı oluşturur
+**Body:**
+```json
+{
+  "name": "ABC Mühendislik"
+}
+```
 
----
+### `GET /company`
+Tüm şirketleri listeler. Sadece `system_admin` erişebilir.
+
+**Headers:**
+```
+Authorization: Bearer <admin_token>
+```
+
+## 👥 USERS – Kullanıcı Yönetimi
+
+### `GET /users`
+Kullanıcıları listeler.
+
+- `system_admin` → tüm kullanıcıları görür  
+- `company_admin` → sadece kendi şirketindeki kullanıcıları görür
+
+**Headers:**
+```
+Authorization: Bearer <token>
+```
+
+### `PATCH /users/update-role`
+Sadece `system_admin` erişebilir. Kullanıcının rolünü günceller.
+
+**Headers:**
+```
+Authorization: Bearer <admin_token>
+```
+
+**Body:**
+```json
+{
+  "userId": "user-uuid",
+  "newRole": "company_admin"
+}
+```
 
 ### 📡 Sensör Verisi
 
-#### GET `/sensors`
+#### GET `/sensors/<sensor-id>/data?start=1h`
 **Açıklama:** Kullanıcının yetkili olduğu sensör verileri
 
----
+**Headers:**
+```
+Authorization: Bearer <admin_token>
+```
 
 ### 📋 Log Kayıtları
 
 #### GET `/logs`
-**Yetki:** `System Admin`, `Company Admin`  
-**Açıklama:** Kullanıcı log sayfası geçmişini getirir
-
-#### POST `/logs/view`
 **Açıklama:** Kullanıcı bir log sayfası görüntülediğinde tetiklenir
 
 ```json
@@ -81,7 +136,22 @@ Tüm isteklerde `Authorization: Bearer <token>` header’ı zorunludur.
 }
 ```
 
----
+#### GET `/logs/history`
+**Yetki:** `System Admin`, `Company Admin`  
+**Açıklama:** Kullanıcı log sayfası geçmişini getirir
+
+#### GET `/logs/summary/daily`
+**Yetki:** `System Admin` 
+**Açıklama:** Sistemdeki tüm kullanıcı aksiyonlarının günlük toplam sayılarını özet olarak döner.
+
+#### GET `/logs/summary/daily/:action`
+**Yetki:** `System Admin` 
+**Açıklama:** Belirli bir kullanıcı aksiyonu (login, view_logs, update_profile vs.) için günlük bazda kaç kez gerçekleştiğini döner.
+
+**Headers:**
+```
+Authorization: Bearer <admin_token>
+```
 
 ### 🔗 WebSocket
 

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Patch, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Req, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -17,10 +17,11 @@ export class UserController {
     private readonly userService: UserService
   ) { }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.SYSTEM_ADMIN, Role.COMPANY_ADMIN)
   @Get()
-  @Roles(Role.SYSTEM_ADMIN)
-  async getAllUsers() {
-    return this.userRepository.find();
+  async getAllUsers(@Req() req) {
+    return this.userService.getUsersByRole(req.user);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
