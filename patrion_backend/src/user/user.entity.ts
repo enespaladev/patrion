@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Company } from 'src/company/company.entity';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 
 export enum Role {
   SYSTEM_ADMIN = 'system_admin',
@@ -19,4 +20,7 @@ export class User {
 
   @Column({ type: 'enum', enum: Role, default: Role.USER })
   role: Role;
+
+  @ManyToOne(() => Company, (company) => company.users, { eager: true, nullable: true })
+  company: Company;
 }

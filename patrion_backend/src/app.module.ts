@@ -16,14 +16,15 @@ import { JwtStrategy } from './auth/jwt.strategy';
 import { UserLogModule } from './user-log/user-log.module';
 
 import { ThrottlerModule } from '@nestjs/throttler';
+import { CompanyModule } from './company/company.module';
 
 dotenv.config();
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ 
+    ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env', 
+      envFilePath: '.env',
     }),
 
     ThrottlerModule.forRoot({
@@ -34,7 +35,7 @@ dotenv.config();
         },
       ],
     }),
-    
+
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST || 'localhost',
@@ -52,9 +53,16 @@ dotenv.config();
     InfluxModule,
     SensorModule,
     UserLogModule,
+    CompanyModule,
   ],
   controllers: [AppController],
-  providers: [AppService, MqttService, InfluxService, WebsocketGateway, JwtStrategy],
+  providers: [
+    AppService, 
+    MqttService, 
+    InfluxService, 
+    WebsocketGateway, 
+    // JwtStrategy
+  ],
   exports: [WebsocketGateway],
 })
-export class AppModule {}
+export class AppModule { }

@@ -1,17 +1,23 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from './user.entity'; // User entity'sini import edin
+import { Role, User } from './user.entity'; // User entity'sini import edin
 import { CreateUserDto } from './create-user.dto'; // CreateUserDto'yu import edin
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
+import { Company } from 'src/company/company.entity';
 
 @Injectable()
-export class UserRepository {
+export class UserManagerService {
   constructor(
     private jwtService: JwtService,
+
     @InjectRepository(User)
-    private readonly userRepository: Repository<User>, // User entity'si ile ilişkili repository
+    private readonly userRepository: Repository<User>, 
+
+    @InjectRepository(Company)
+    private readonly companyRepository: Repository<Company>,
+
   ) {}
 
   // Kullanıcıyı ID'ye göre bulma
@@ -25,17 +31,27 @@ export class UserRepository {
     return user ?? undefined;
   }
 
-  // Kullanıcıyı kaydetme
   async createUser(createUserDto: CreateUserDto): Promise<User> {
-    const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
-    const user = this.userRepository.create({
-      ...createUserDto,
-      password: hashedPassword,
-    });
-    return this.userRepository.save(user);
-  }
+  const { email, password, role, companyId } = createUserDto;
 
-  // Kullanıcıyı silme
+  const existing = await this.userRepository.findOne({ where: { email } });
+  if (existing) throw new ConflictException('Bu email zaten kayıtlı');
+
+  const company = await this.companyRepository.findOne({ where: { id: companyId } });
+  if (!company) throw new NotFoundException('Şirket bulunamadı');
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  const user = this.userRepository.create({
+    email,
+    password: hashedPassword,
+    role: role ?? Role.USER,
+    company,
+  });
+
+  return this.userRepository.save(user);
+}
+
   async deleteUser(id: number): Promise<void> {
     try {
       await this.userRepository.delete(id); // Kullanıcıyı ID'ye göre sil

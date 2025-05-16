@@ -6,15 +6,18 @@ import { UserModule } from '../user/user.module';
 import { JwtStrategy } from './jwt.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { JwtAuthGuard } from './jwt-auth.guard';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from 'src/user/user.entity';
 
 @Module({
   imports: [
+    // TypeOrmModule.forFeature([User]),
     PassportModule,
+    UserModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET || 'supersecretkey',
       signOptions: { expiresIn: '1d' },
     }),
-    UserModule,
   ],
   providers: [AuthService, JwtStrategy, JwtAuthGuard], // ✅ EKLENDİ
   controllers: [AuthController],

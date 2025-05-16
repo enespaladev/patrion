@@ -6,6 +6,27 @@ Tüm isteklerde `Authorization: Bearer <token>` header’ı zorunludur.
 
 ### 🔐 Auth
 
+#### POST `/auth/register`
+**Açıklama:** Kullanıcı oluşturur.
+**Yetki:** `System Admin`
+
+**İstek:**
+```json
+{
+  "email": "user@example.com",
+  "password": "password123",
+  "role": "user"
+}
+
+#### Yanıt:
+```json
+{
+    "id": "...",
+    "email": "user@example.com",
+    "password": "...",
+    "role": "user"
+}
+
 #### POST `/auth/login`
 **Açıklama:** Kullanıcı girişi yapar.
 

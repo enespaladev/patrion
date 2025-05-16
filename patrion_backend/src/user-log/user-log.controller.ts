@@ -10,6 +10,7 @@ declare module 'express' {
     user?: { userId: string }; 
   }
 }
+
 import { UserLogService } from './user-log.service';
 
 @Controller('logs')
