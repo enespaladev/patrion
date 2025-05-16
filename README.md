@@ -51,14 +51,14 @@ graph TD;
 
 ```bash
 # Projeyi klonlayın
-git clone https://github.com/kullaniciadi/proje-adi.git
-cd proje-adi
+git clone https://github.com/enespaladev/patrion.git
+cd patrion
 
 # Ortam değişkenlerini ayarlayın
 cp .env.example .env
 
 # Docker üzerinden başlatın
-docker compose up --build -d
+docker compose up --build 
 ```
 
 ## 🔌 .env Değişkenleri
@@ -96,13 +96,3 @@ Gerçek zamanlı olarak sıcaklık ve nem grafiklerini gösteren arayüz React i
 - Docker ile container yapısı
 - REST API + WebSocket endpointleri
 
-## 🧪 Testler
-
-- JWT doğrulama testleri
-- Rol bazlı erişim testi
-- WebSocket mesaj kontrolü
-- (Jest ile örnek testler yakında eklenecek)
-
-## 📁 Lisans
-
-MIT

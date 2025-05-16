@@ -31,7 +31,7 @@ export class UserLogController {
     return req.headers;
   }
 
-  @Get('view')
+  @Get('/')
   async logView(@Req() req: Request) {
     const user = req.user as any;
     return this.userLogService.logAction(user.userId, 'viewed_logs');

@@ -38,6 +38,7 @@
     "dotenv": "^16.5.0",
     "influx": "^5.10.0",
     "mqtt": "^5.13.0",
+    "nest-winston": "^1.10.2",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",

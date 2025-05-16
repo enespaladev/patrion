@@ -7,14 +7,14 @@ Tüm isteklerde `Authorization: Bearer <token>` header’ı zorunludur.
 ### 🔐 Auth
 
 #### POST `/auth/login`
-**Açıklama:** Giriş işlemi
+**Açıklama:** Kullanıcı girişi yapar.
 
+**İstek:**
 ```json
 {
-  "email": "admin@admin.com",
-  "password": "admin123"
+  "email": "user@example.com",
+  "password": "password123"
 }
-```
 
 #### Yanıt:
 ```json
@@ -49,7 +49,7 @@ Tüm isteklerde `Authorization: Bearer <token>` header’ı zorunludur.
 **Yetki:** `System Admin`, `Company Admin`  
 **Açıklama:** Kullanıcı log sayfası geçmişini getirir
 
-#### POST `/logs`
+#### POST `/logs/view`
 **Açıklama:** Kullanıcı bir log sayfası görüntülediğinde tetiklenir
 
 ```json
